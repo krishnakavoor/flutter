@@ -1,8 +1,47 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 void main() {
   runApp(MyApp());
 }
+
+Future<Album> fetchAlbum() async {
+  final response =
+  await http.get('https://restcountries.eu/rest/v2/alpha/co');
+
+  if (response.statusCode == 200) {
+    // If the server did return a 200 OK response,
+    // then parse the JSON.
+    return Album.fromJson(json.decode(response.body));
+  } else {
+    // If the server did not return a 200 OK response,
+    // then throw an exception.
+    throw Exception('Failed to load album');
+  }
+}
+
+class Album {
+  final String name;
+  final String alpha2Code;
+  final String alpha3Code;
+
+  Album({this.name, this.alpha2Code, this.alpha3Code});
+
+  factory Album.fromJson(Map<String, dynamic> json) {
+    return Album(
+      name: json['name'],
+      alpha2Code: json['alpha2Code'],
+      alpha3Code: json['alpha3Code'],
+    );
+  }
+}
+
+
+
+
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
@@ -51,6 +90,14 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
+  Future<Album> futureAlbum;
+
+  @override
+  void initState() {
+    super.initState();
+    futureAlbum = fetchAlbum();
+  }
+
 
   void _incrementCounter() {
     setState(() {
@@ -128,6 +175,22 @@ class _MyHomePageState extends State<MyHomePage> {
               '$_counter',
               style: Theme.of(context).textTheme.headline4,
             ),
+        Center(
+          child: FutureBuilder<Album>(
+            future: futureAlbum,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return Text(snapshot.data.name);
+              } else if (snapshot.hasError) {
+                return Text("${snapshot.error}");
+              }
+
+              // By default, show a loading spinner.
+              return CircularProgressIndicator();
+            },
+          ),
+        )
+          /***/
           ],
         ),
       ),
