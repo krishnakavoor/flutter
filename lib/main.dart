@@ -8,36 +8,6 @@ void main() {
   runApp(MyApp());
 }
 
-Future<Album> fetchAlbum() async {
-  final response =
-  await http.get('https://restcountries.eu/rest/v2/alpha/co');
-
-  if (response.statusCode == 200) {
-    // If the server did return a 200 OK response,
-    // then parse the JSON.
-    return Album.fromJson(json.decode(response.body));
-  } else {
-    // If the server did not return a 200 OK response,
-    // then throw an exception.
-    throw Exception('Failed to load album');
-  }
-}
-
-class Album {
-  final String name;
-  final String alpha2Code;
-  final String alpha3Code;
-
-  Album({this.name, this.alpha2Code, this.alpha3Code});
-
-  factory Album.fromJson(Map<String, dynamic> json) {
-    return Album(
-      name: json['name'],
-      alpha2Code: json['alpha2Code'],
-      alpha3Code: json['alpha3Code'],
-    );
-  }
-}
 
 
 
@@ -72,7 +42,6 @@ class MyApp extends StatelessWidget {
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
-
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
   // how it looks.
@@ -90,13 +59,13 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
-  Future<Album> futureAlbum;
 
   @override
   void initState() {
     super.initState();
-    futureAlbum = fetchAlbum();
   }
+
+
 
 
   void _incrementCounter() {
@@ -110,8 +79,27 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  _dsiplayDialogue(BuildContext context) async{
+  return showDialog(
+      context: context,
+      builder: (BuildContext context){
+        return AlertDialog(
+          title: Text("Alert Dialog"),
+          content: Text("Dialog Content"),
+        );
+      }
+  );
+  }
+
   @override
   Widget build(BuildContext context) {
+    var list = [{'id':"123123","date":"20/08/2016","description":"Claim Description"},
+      {'id':"123124","date":"26/08/2016","description":"Claim Description"},
+      {'id':"123124","date":"26/08/2016","description":"Claim Description"}
+
+      ];
+
+
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
     //
@@ -147,49 +135,47 @@ class _MyHomePageState extends State<MyHomePage> {
             Text('Recent Claims'),
             Table(
               border: TableBorder.all(color: Colors.black),
-
               columnWidths: {
                 0: FixedColumnWidth(100.0),
                 1: FlexColumnWidth(),
-                2: FixedColumnWidth(50.0)
+                2: FixedColumnWidth(60.0)
               },
               children: [
                 TableRow(children: [
                   Text('Claim ID',style:TextStyle(fontWeight: FontWeight.bold)),
-                  Text('Description',style:TextStyle(fontWeight: FontWeight.bold)),
+                  Text('Date',style:TextStyle(fontWeight: FontWeight.bold)),
                   Text('View',style:TextStyle(fontWeight: FontWeight.bold)),
                 ]),
-                TableRow(children: [
-                  Text('Claim 2'),
-                  Text('Claim 2'),
-                  Text('View'),
-                ]),
-                TableRow(children: [
-                  Text('Claim 3'),
-                  Text('Claim 2'),
-                  Text('View'),
-                ])
               ],
             ),
+            Table(
+              border: TableBorder.all(color: Colors.black),
+              columnWidths: {
+                0: FixedColumnWidth(100.0),
+                1: FlexColumnWidth(),
+                2: FixedColumnWidth(60.0)
+              },
+              children:[
+                for(var item in list )  TableRow(children: [
+                  Text(item['id']),
+                  Text(item['date']+":"+item['description']),
+                  RaisedButton(
+                    child: Text("View"),
+                    onPressed: () => _dsiplayDialogue(context),
+                    color: Colors.red,
+                    textColor: Colors.white,
+                    splashColor: Colors.grey,
+                    padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                  )
+              ]
+    )
+    ]
+            ),
+
             Text(
               '$_counter',
               style: Theme.of(context).textTheme.headline4,
             ),
-        Center(
-          child: FutureBuilder<Album>(
-            future: futureAlbum,
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                return Text(snapshot.data.name);
-              } else if (snapshot.hasError) {
-                return Text("${snapshot.error}");
-              }
-
-              // By default, show a loading spinner.
-              return CircularProgressIndicator();
-            },
-          ),
-        )
           /***/
           ],
         ),
