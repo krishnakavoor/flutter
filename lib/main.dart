@@ -79,27 +79,105 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  _dsiplayDialogue(BuildContext context) async{
-  return showDialog(
+  _dsiplayDialogue(BuildContext context,claimId) async{
+ /* return showDialog(
       context: context,
       builder: (BuildContext context){
         return AlertDialog(
-          title: Text("Alert Dialog"),
-          content: Text("Dialog Content"),
+          title: Text("Claim Details "+claimId),
+          content: Text("Claim Status:Paid"),
+
         );
       }
-  );
+  );*/
+   return showGeneralDialog(
+        context: context,
+        barrierDismissible: true,
+        barrierLabel: MaterialLocalizations.of(context)
+            .modalBarrierDismissLabel,
+        barrierColor: Colors.black45,
+        transitionDuration: const Duration(milliseconds: 200),
+        pageBuilder: (BuildContext buildContext,
+            Animation animation,
+            Animation secondaryAnimation) {
+          return Center(
+            child: Container(
+              width: MediaQuery.of(context).size.width - 30,
+              height: MediaQuery.of(context).size.height -  100,
+              padding: EdgeInsets.all(80),
+              color: Colors.white,
+              child: Column(
+                children: [
+                  Table(
+
+                    columnWidths: {
+                      0: FixedColumnWidth(200.0),
+                      1: FlexColumnWidth(),
+                      2: FixedColumnWidth(200.0),
+                    },
+                    children: [
+                      TableRow(children: [
+                        Text('Claim ID:',style:TextStyle(fontSize: 16.0,color: Colors.black,fontWeight: FontWeight.bold)),
+                        Text(claimId,style:TextStyle(fontSize: 16.0,color: Colors.black,fontWeight: FontWeight.bold)),
+                        Text('Status:',style:TextStyle(fontSize: 16.0,color: Colors.black,fontWeight: FontWeight.bold)),
+                        Text('In Progress',style:TextStyle(fontSize: 16.0,color: Colors.red,fontWeight: FontWeight.bold)),
+                      ]),
+                      TableRow(children: [
+                        Text('Reference ID:',style:TextStyle(fontSize: 16.0,color: Colors.black,fontWeight: FontWeight.bold)),
+                        Text('123456',style:TextStyle(fontSize: 16.0,color: Colors.black,fontWeight: FontWeight.bold)),
+                        Text('Payment Status:',style:TextStyle(fontSize: 16.0,color: Colors.black,fontWeight: FontWeight.bold)),
+                        Text('Paid',style:TextStyle(fontSize: 16.0,color: Colors.red,fontWeight: FontWeight.bold)),
+                      ]),
+                      TableRow(children: [
+                        Text('Created By:',style:TextStyle(fontSize: 16.0,color: Colors.black,fontWeight: FontWeight.bold)),
+                        Text('Same Name',style:TextStyle(fontSize: 16.0,color: Colors.black,fontWeight: FontWeight.bold)),
+                        Text('Created date:',style:TextStyle(fontSize: 16.0,color: Colors.black,fontWeight: FontWeight.bold)),
+                        Text('12/09/2018 12:30 PM',style:TextStyle(fontSize: 16.0,color: Colors.black,fontWeight: FontWeight.bold)),
+                      ]),
+                      TableRow(children: [
+                        Text('Modified By:',style:TextStyle(fontSize: 16.0,color: Colors.black,fontWeight: FontWeight.bold)),
+                        Text('Same Name',style:TextStyle(fontSize: 16.0,color: Colors.black,fontWeight: FontWeight.bold)),
+                        Text('Created date:',style:TextStyle(fontSize: 16.0,color: Colors.black,fontWeight: FontWeight.bold)),
+                        Text('12/09/2018 11:30 AM',style:TextStyle(fontSize: 16.0,color: Colors.black,fontWeight: FontWeight.bold)),
+                      ]),
+                      TableRow(children: [
+                        Text('Primary Insured:',style:TextStyle(fontSize: 16.0,color: Colors.black,fontWeight: FontWeight.bold)),
+                        Text('Dr.Same Name',style:TextStyle(fontSize: 16.0,color: Colors.black,fontWeight: FontWeight.bold)),
+                        Text('Claim Details',style:TextStyle(fontSize: 16.0,color: Colors.black,fontWeight: FontWeight.bold)),
+                        Text('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod  consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident',style:TextStyle(fontSize: 16.0,color: Colors.black,fontWeight: FontWeight.bold)),
+                      ]),
+                    ],
+                  ),
+
+
+                  RaisedButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text(
+                      "Close",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    color: Colors.black,
+                  )
+                ],
+              ),
+            ),
+          );
+        });
   }
 
   @override
   Widget build(BuildContext context) {
     var list = [{'id':"123123","date":"20/08/2016","description":"Claim Description"},
       {'id':"123124","date":"26/08/2016","description":"Claim Description"},
-      {'id':"123124","date":"26/08/2016","description":"Claim Description"}
+      {'id':"123125","date":"26/08/2016","description":"Claim Description"},
+      {'id':"123126","date":"26/08/2016","description":"Claim Description"}
 
       ];
 
 
+    
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
     //
@@ -138,7 +216,7 @@ class _MyHomePageState extends State<MyHomePage> {
               columnWidths: {
                 0: FixedColumnWidth(100.0),
                 1: FlexColumnWidth(),
-                2: FixedColumnWidth(60.0)
+                2: FixedColumnWidth(100.0)
               },
               children: [
                 TableRow(children: [
@@ -153,7 +231,7 @@ class _MyHomePageState extends State<MyHomePage> {
               columnWidths: {
                 0: FixedColumnWidth(100.0),
                 1: FlexColumnWidth(),
-                2: FixedColumnWidth(60.0)
+                2: FixedColumnWidth(100.0)
               },
               children:[
                 for(var item in list )  TableRow(children: [
@@ -161,7 +239,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   Text(item['date']+":"+item['description']),
                   RaisedButton(
                     child: Text("View"),
-                    onPressed: () => _dsiplayDialogue(context),
+                    onPressed: () => _dsiplayDialogue(context,item['id']),
                     color: Colors.red,
                     textColor: Colors.white,
                     splashColor: Colors.grey,
